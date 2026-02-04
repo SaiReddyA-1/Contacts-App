@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0f172a" />
+    <title>Contacts</title>
+
+    <!-- PWA manifest -->
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- iOS PWA support -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Contacts" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- App shell -->
+      <header class="app-header">
+        <div class="app-header-main">
+          <h1 class="app-title">Contacts</h1>
+          <button id="btn-open-settings" class="icon-button" aria-label="Settings">
+            <span class="icon">⚙️</span>
+          </button>
+        </div>
+        <div class="search-bar-wrapper">
+          <input
+            id="search-input"
+            type="search"
+            class="search-input"
+            placeholder="Search contacts"
+            autocomplete="off"
+          />
+        </div>
+      </header>
+
+      <main class="app-main" id="app-main" role="main">
+        <!-- Contact list screen -->
+        <section id="screen-contacts" class="screen screen-active" aria-label="Contacts list">
+          <div id="contacts-list" class="contacts-list" data-screen="list">
+            <!-- Populated by JS -->
+          </div>
+          <div id="empty-state" class="empty-state">
+            <p>No contacts yet.</p>
+            <p class="empty-state-sub">Tap the + button to add your first contact.</p>
+          </div>
+        </section>
+
+        <!-- Favorites screen -->
+        <section id="screen-favorites" class="screen" aria-label="Favorites">
+          <div id="favorites-list" class="contacts-list contacts-list--favorites">
+            <!-- Populated by JS -->
+          </div>
+          <div id="favorites-empty" class="empty-state">
+            <p>No favorites yet.</p>
+            <p class="empty-state-sub">Swipe right on a contact to favorite.</p>
+          </div>
+        </section>
+
+        <!-- Contact detail screen -->
+        <section id="screen-detail" class="screen" aria-label="Contact detail" hidden>
+          <header class="detail-header">
+            <button id="btn-detail-back" class="icon-button" aria-label="Back">
+              ←
+            </button>
+            <div class="detail-header-actions">
+              <button id="btn-detail-favorite" class="icon-button" aria-label="Favorite">
+                ☆
+              </button>
+              <button id="btn-detail-edit" class="icon-button" aria-label="Edit contact">
+                ✎
+              </button>
+              <button id="btn-detail-delete" class="icon-button danger" aria-label="Delete contact">
+                🗑
+              </button>
+            </div>
+          </header>
+          <div class="detail-body">
+            <div class="detail-avatar-wrapper">
+              <button id="btn-detail-avatar" class="avatar-button" aria-label="Change photo">
+                <img
+                  id="detail-avatar"
+                  class="avatar-image"
+                  src="assets/placeholder-avatar.svg"
+                  alt="Contact avatar"
+                />
+              </button>
+              <h2 id="detail-name" class="detail-name"></h2>
+              <p id="detail-company-title" class="detail-company-title"></p>
+            </div>
+
+            <div id="detail-actions" class="detail-actions">
+              <!-- Quick actions (call, message, email) injected by JS -->
+            </div>
+
+            <div id="detail-fields" class="detail-fields">
+              <!-- Fields (phones, emails, notes) injected by JS -->
+            </div>
+          </div>
+        </section>
+
+        <!-- Add/Edit contact screen -->
+        <section id="screen-form" class="screen" aria-label="Add or edit contact" hidden>
+          <header class="form-header">
+            <button id="btn-form-cancel" class="icon-button" aria-label="Cancel">
+              ✕
+            </button>
+            <h2 id="form-title" class="form-title">New Contact</h2>
+            <button id="btn-form-save" class="primary-button" aria-label="Save contact">
+              Save
+            </button>
+          </header>
+          <form id="contact-form" class="contact-form" novalidate>
+            <input type="hidden" id="contact-id" />
+
+            <section class="form-section">
+              <div class="form-avatar-row">
+                <button
+                  id="btn-form-avatar"
+                  type="button"
+                  class="avatar-button"
+                  aria-label="Change photo"
+                >
+                  <img
+                    id="form-avatar"
+                    class="avatar-image"
+                    src="assets/placeholder-avatar.svg"
+                    alt="Contact avatar"
+                  />
+                </button>
+                <input
+                  id="photo-input"
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  class="hidden-input"
+                />
+              </div>
+
+              <div class="form-row">
+                <label for="first-name">First name</label>
+                <input id="first-name" name="firstName" required />
+              </div>
+              <div class="form-row">
+                <label for="last-name">Last name</label>
+                <input id="last-name" name="lastName" />
+              </div>
+              <div class="form-row">
+                <label for="company">Company</label>
+                <input id="company" name="company" />
+              </div>
+              <div class="form-row">
+                <label for="job-title">Job title</label>
+                <input id="job-title" name="jobTitle" />
+              </div>
+            </section>
+
+            <section class="form-section">
+              <div class="form-section-header">
+                <h3>Phone numbers</h3>
+                <button
+                  id="btn-add-phone"
+                  type="button"
+                  class="link-button"
+                  aria-label="Add phone"
+                >
+                  + Add
+                </button>
+              </div>
+              <div id="phones-container" class="dynamic-list">
+                <!-- Phone fields injected by JS -->
+              </div>
+            </section>
+
+            <section class="form-section">
+              <div class="form-section-header">
+                <h3>Email addresses</h3>
+                <button
+                  id="btn-add-email"
+                  type="button"
+                  class="link-button"
+                  aria-label="Add email"
+                >
+                  + Add
+                </button>
+              </div>
+              <div id="emails-container" class="dynamic-list">
+                <!-- Email fields injected by JS -->
+              </div>
+            </section>
+
+            <section class="form-section">
+              <div class="form-row">
+                <label for="notes">Notes</label>
+                <textarea id="notes" rows="3"></textarea>
+              </div>
+            </section>
+          </form>
+        </section>
+
+        <!-- Settings / Backup screen -->
+        <section id="screen-settings" class="screen" aria-label="Settings" hidden>
+          <header class="settings-header">
+            <button id="btn-settings-back" class="icon-button" aria-label="Back">
+              ←
+            </button>
+            <h2 class="settings-title">Settings & Backup</h2>
+          </header>
+          <div class="settings-body">
+            <section class="settings-section">
+              <h3>Backup</h3>
+              <button id="btn-export" class="secondary-button">
+                Export contacts (JSON)
+              </button>
+              <label for="import-input" class="secondary-button">
+                Import contacts (JSON)
+              </label>
+              <input
+                id="import-input"
+                type="file"
+                accept="application/json"
+                class="hidden-input"
+              />
+            </section>
+
+            <section class="settings-section">
+              <h3>Storage</h3>
+              <button id="btn-clear-data" class="danger-button">
+                Clear all data
+              </button>
+            </section>
+
+            <section class="settings-section">
+              <h3>App</h3>
+              <p class="settings-text">Contacts PWA • Works offline • No cloud sync.</p>
+              <p class="settings-text" id="app-version">v1.0.0</p>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <!-- Bottom navigation -->
+      <nav class="bottom-nav" aria-label="Primary">
+        <button
+          id="tab-contacts"
+          class="bottom-nav-item bottom-nav-item--active"
+          data-target="screen-contacts"
+        >
+          <span class="icon">👥</span>
+          <span class="label">Contacts</span>
+        </button>
+        <button id="tab-favorites" class="bottom-nav-item" data-target="screen-favorites">
+          <span class="icon">★</span>
+          <span class="label">Favorites</span>
+        </button>
+      </nav>
+
+      <!-- Floating action button -->
+      <button id="fab-add-contact" class="fab" aria-label="Add contact">
+        +
+      </button>
+
+      <!-- Toast / snackbar -->
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
