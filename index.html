@@ -71,6 +71,9 @@
               ←
             </button>
             <div class="detail-header-actions">
+              <button id="btn-detail-qr" class="icon-button" aria-label="Share via QR">
+                ⧉
+              </button>
               <button id="btn-detail-favorite" class="icon-button" aria-label="Favorite">
                 ☆
               </button>
@@ -269,6 +272,26 @@
 
       <!-- Toast / snackbar -->
       <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+      <!-- QR share overlay -->
+      <div id="qr-overlay" class="overlay-root" hidden>
+        <div class="overlay-backdrop"></div>
+        <div class="overlay-card">
+          <header class="overlay-header">
+            <h2 class="overlay-title">Share contact</h2>
+            <button id="qr-close" class="icon-button" aria-label="Close">
+              ✕
+            </button>
+          </header>
+          <div class="overlay-content">
+            <p class="overlay-text">
+              Show this code to someone else so they can add this contact. The code only contains the
+              name and primary phone number.
+            </p>
+            <canvas id="qr-canvas" class="qr-share-canvas" width="240" height="240"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script type="module" src="app.js"></script>

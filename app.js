@@ -3,6 +3,7 @@ import { ContactsUI } from "./modules/contacts-ui.js";
 import { ContactsForm } from "./modules/contacts-form.js";
 import { setupSearch } from "./modules/search.js";
 import { setupExportImport } from "./modules/export-import.js";
+import { setupQR } from "./modules/qr.js";
 
 const state = {
   contacts: [],
@@ -385,6 +386,11 @@ async function bootstrap() {
     }
     await refreshContacts({ silent: true });
   }
+
+  setupQR({
+    getSelectedContact: async () =>
+      state.selectedContactId ? db.getContact(state.selectedContactId) : null,
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {

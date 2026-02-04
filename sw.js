@@ -10,6 +10,7 @@ const APP_SHELL = [
   "./modules/contacts-form.js",
   "./modules/search.js",
   "./modules/export-import.js",
+  "./modules/qr.js",
   "./assets/placeholder-avatar.svg"
 ];
 
